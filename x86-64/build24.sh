@@ -40,6 +40,26 @@ else
   ls -lah /home/build/immortalwrt/packages/
 fi
 
+# 下载并解压OpenClash run包
+TMP_RUN="/home/build/immortalwrt/tmp_download"
+PKG_OUT="/home/build/immortalwrt/ib/packages"
+
+mkdir -p "${TMP_RUN}"
+mkdir -p "${PKG_OUT}"
+
+RUN_URL="https://github.com/AUK9527/Are-u-ok/releases/download/OpenClash/OpenClash_0.47.110+x86_64_core.run"
+RUN_FILE="${TMP_RUN}/openclash.run"
+
+echo "Download OpenClash run ..."
+wget -qO "${RUN_FILE}" "${RUN_URL}"
+
+echo "Extract run package ..."
+"${RUN_FILE}" --target "${TMP_RUN}/tmp_run_out" --noexec
+cp "${TMP_RUN}/tmp_run_out"/*.ipk "${PKG_OUT}/"
+
+rm -rf "${TMP_RUN}"
+echo "OpenClash extract done."
+
 # 输出调试信息
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始构建固件..."
 
