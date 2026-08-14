@@ -71,12 +71,12 @@ elif [ "$count" -gt 1 ]; then
     # 多网口设备配置
     # 配置WAN
     uci set network.wan=interface
-    uci set network.wan.device="$wan_ifname"
+    uci set network.wan.device="eth1"
     uci set network.wan.proto='dhcp'
 
     # 配置WAN6
     uci set network.wan6=interface
-    uci set network.wan6.device="$wan_ifname"
+    uci set network.wan6.device="eth1"
     uci set network.wan6.proto='dhcpv6'
 
     # 查找 br-lan 设备 section
