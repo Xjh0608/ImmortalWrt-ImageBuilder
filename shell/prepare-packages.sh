@@ -25,3 +25,26 @@ find "$BASE_DIR" -mindepth 2 -maxdepth 2 -type f -name "*.ipk" ! -path "$TEMP_DI
   -exec cp -v {} "$TARGET_DIR"/ \;
 
 echo "✅ 所有 .ipk 文件已整理至 $TARGET_DIR/"
+
+# 下载OpenClash run包，ghproxy镜像优先，失败则跳过不中断编译
+BASE_DIR="extra-packages"
+OC_RUN="${BASE_DIR}/openclash.run"
+mkdir -p "${BASE_DIR}"
+
+# ghproxy镜像源
+wget --timeout=30 -q -O "${OC_RUN}" "https://mirror.ghproxy.com/https://github.com/wkccd/CloudRunFilesBuilder/releases/latest/download/openclash-x86_64.run"
+
+# 镜像下载失败，回退原始github
+if [ ! -s "${OC_RUN}" ]; then
+    echo "ghproxy源下载失败，尝试GitHub原始源"
+    wget --timeout=30 -q -O "${OC_RUN}" "https://github.com/wkccd/CloudRunFilesBuilder/releases/latest/download/openclash-x86_64.run"
+fi
+
+# 文件有效才解压；不存在/0字节直接跳过，继续编译
+if [ -s "${OC_RUN}" ]; then
+    echo "✅ OpenClash.run下载成功，开始解压"
+    sh "${OC_RUN}" --target "${TEMP_DIR}" --noexec
+else
+    echo "⚠️ OpenClash.run下载全部失败，跳过OpenClash插件，固件继续构建"
+    rm -f "${OC_RUN}"
+fi
